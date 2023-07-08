@@ -1,5 +1,5 @@
 # C++OSEngine
-A tool kit (not really) that using C++ to create an OS
+A toolkit (not really) that using C++ to create an OS
 ![Alt cpposengine](misc/cpposengine.png)
 
 *HOW TO BUILD*:
