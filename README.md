@@ -6,8 +6,8 @@ INFO: Some of the function in this Engine might not worked like:
   ATA Harddrive, MBR, Sound driver, FAT, FileSystem, Mouse, GUI (still in development).
 
 *HOW TO BUILD*:
-* 1: Extract the source code after you downloaded it.
-* 2: open the terminal and type: make to build the project.
+* 1: Extract the source code after you downloaded it. <if you're use git, you can skip this step>
+* 2: open the terminal, go to the project directory and type 'make' to build the project.
 * 3: to install the project, run 'make install' or 'sudo make install'.
 
 *SYNTAX FOR MAIN CODE*
