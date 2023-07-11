@@ -53,6 +53,6 @@ ld -m elf_i386 -static -pie --no-dynamic-linker -T <object_path>/linker.ld -o ke
 * usually object_path can be found in /opt/CppOSEngine.
 * if you install the program to another path, change object_path to your path.
 
-***SOME FILE BASED ON OTHER GITHUB REPOSITORY AND OFFICIAL OSDEV WEBSITE (wiki.osdev.org)***
+***SOME FILE (OR CODE) BASED ON OTHER GITHUB REPOSITORY AND OFFICIAL OSDEV WEBSITE (wiki.osdev.org)***
 
 ***THIS PROJECT USE MIT LICENSE***
