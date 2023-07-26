@@ -1,16 +1,18 @@
-# C++OSEngine
+# C++OSEngine [Full name: C++ Operating System Engine]
 A toolkit (not really) that using C++ to create an OS.
 ![Alt cpposengine](misc/cpposengine.png)
 
 INFO: Some of the function in this Engine might not worked like:
   ATA Harddrive, MBR, Sound driver, FAT, FileSystem, Mouse, GUI (still in development).
 
-*HOW TO BUILD*:
-* 1: Extract the source code after you downloaded it. <if you're use git, you can skip this step>
+INFO: Debugger hasn't support yet.
+
+*HOW TO BUILD* >*For Linux Only*<:
+* 1: Extract zip file after you downloaded it (using Terminal or File Manager or Extractor programs). <if you use git, you can skip this step>
 * 2: open the terminal, go to the project directory and type 'make' to build the project.
 * 3: to install the project, run 'make install' or 'sudo make install'.
 
-*EXAMPLE CODE*
+*CODE*
 ```cpp
 #include <Kernel/console.h>
 #include <Kernel/strings.h>
