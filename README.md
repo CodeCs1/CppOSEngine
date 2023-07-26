@@ -1,5 +1,5 @@
 # C++OSEngine
-A toolkit (not really) that using C++ to create an OS
+A toolkit (not really) that using C++ to create an OS.
 ![Alt cpposengine](misc/cpposengine.png)
 
 INFO: Some of the function in this Engine might not worked like:
@@ -10,12 +10,13 @@ INFO: Some of the function in this Engine might not worked like:
 * 2: open the terminal, go to the project directory and type 'make' to build the project.
 * 3: to install the project, run 'make install' or 'sudo make install'.
 
-*SYNTAX FOR MAIN CODE*
+*EXAMPLE CODE*
 ```cpp
 #include <Kernel/console.h>
 #include <Kernel/strings.h>
 #include <Kernel/utils.h>
 #include <Kernel/kernel.h>
+//New version include Kernel/Core.h
 
 class Main : public kernel {
   public:
