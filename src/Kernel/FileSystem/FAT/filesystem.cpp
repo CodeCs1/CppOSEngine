@@ -10,18 +10,23 @@ void FAT32_Creation::ReadBiosBlock(HardDrive *hd, uint32 offset) {
     BIOSBlock32 biosblock;
     Hex hex;
     Console console;
+
+    uint32 fatStart = offset + biosblock.reservedSectors;
+    uint32 fatsize = biosblock.tableSize;
+    uint32 dataStart = fatStart + fatsize*biosblock.fatcopies;
+    uint32 rootstart = dataStart + biosblock.sectorsPerCluster*(biosblock.rootCluster-2);
+
     hd->Read28(offset, (uint8 *)&biosblock, sizeof(BIOSBlock32));
+
+    console.WriteLine("sectors per cluster: ");
+    hex.printfHex(biosblock.sectorsPerCluster);
+    console.WriteChr('\n');
 
     for (int i=0x00;i<sizeof(BIOSBlock32);i++) {
         hex.printfHex(((uint8*)&biosblock)[i]);
         console.WriteChr(' ');
     }
     console.WriteLine("\n");
-
-    uint32 fatStart = offset + biosblock.reservedSectors;
-    uint32 fatsize = biosblock.tableSize;
-    uint32 dataStart = fatStart + fatsize*biosblock.fatcopies;
-    uint32 rootstart = dataStart + biosblock.sectorsPerCluster*(biosblock.rootCluster-2);
 
     DirectoryEn dirent[16];
 
@@ -42,13 +47,30 @@ void FAT32_Creation::ReadBiosBlock(HardDrive *hd, uint32 offset) {
             continue;
 
         uint32 fileCluster = ((uint32)dirent[i].firstClusterHigh) << 16 | ((uint32)dirent[i].firstClusterLow);
-        uint32 fileSector  = dataStart + biosblock.sectorsPerCluster * (fileCluster-2);
-
+        int32 nextFileCluster = fileCluster;
+        int32 size= dirent[i].size;
         uint8 buffer[513];
+        uint8 fatbuffer[513];
 
-        hd->Read28(fileSector, buffer, 512);
-        buffer[dirent[i].size] = '\0';
-        console.WriteLine((char*)buffer);
+        while(size>0) {      
+            uint32 fileSector  = dataStart + biosblock.sectorsPerCluster * (nextFileCluster-2);
+            int offset =0;
+            
+            for (; size>0;size-=512) {
+                hd->Read28(fileSector+offset, buffer, 512);
+
+                buffer[size > 512 ? 512 : size] = '\0';
+                console.WriteLine((char*)buffer);
+
+                if(++offset > biosblock.sectorsPerCluster)
+                    break;
+            }
+
+            uint32 CurrentFatCluster = nextFileCluster / (512/sizeof(uint32));
+            hd->Read28(fatStart+CurrentFatCluster, fatbuffer, 512);
+            uint32 CurrentfatOffset = nextFileCluster % (512/sizeof(uint32));
+            nextFileCluster = ((uint32*)&fatbuffer)[CurrentfatOffset] & 0x0FFFFFFF;
+        }
 
     }
 

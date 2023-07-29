@@ -7,6 +7,7 @@
 uint8 strEql(string2 ch1, string2 ch2);
 
 void* int_to_ascii(int n, char str[]);
+uint16 stringlen(string2 ch);
 
 string itos(int n);
 

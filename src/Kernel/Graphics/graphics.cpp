@@ -1,70 +1,72 @@
 #include "../include/Graphics/graphics.h"
 #include "../include/kernel.h"
+#include "../include/Core.h"
 
-Graphics::Graphics() {
+
+Graphics::Graphics(){
     Assembly _asm_;
-    _asm_.in(0x3c2), //misc
-    _asm_.in(0x3d4), //crtcIndex
-    _asm_.in(0x3d5), //crtcData
-    _asm_.in(0x3c4), //SequencerIndex
-    _asm_.in(0x3c5), //SequencerData
-    _asm_.in(0x3ce), //Graphics controller index
-    _asm_.in(0x3cf), //Graphics controller DATA
-    _asm_.in(0x3c0), //AttributeControllerIndex
-    _asm_.in(0x3c1), //AttributeControllerReadPort
-    _asm_.in(0x3c0), //AttributeControllerWrite
-    _asm_.in(0x3da); //AttributeControllerReset
+    _asm_.in(0x3C2); //misc
+    _asm_.in(0x3D4); //crtcIndex
+    _asm_.in(0x3D5); //crtcData
+    _asm_.in(0x3C4); //SequencerIndex
+    _asm_.in(0x3C5); //SequencerData
+    _asm_.in(0x3CE); //Graphics controller index
+    _asm_.in(0x3CF); //Graphics controller DATA
+    _asm_.in(0x3C0); //AttributeControllerIndex
+    _asm_.in(0x3C1); //AttributeControllerReadPort
+    _asm_.in(0x3C0); //AttributeControllerWrite
+    _asm_.in(0x3DA); //AttributeControllerReset
 }
 
 Graphics::~Graphics() {}
 
 void Graphics::Initialize() {
     Assembly _asm_;
-    _asm_.in(0x3c2), //misc
-    _asm_.in(0x3d4), //crtcIndex
-    _asm_.in(0x3d5), //crtcData
-    _asm_.in(0x3c4), //SequencerIndex
-    _asm_.in(0x3c5), //SequencerData
-    _asm_.in(0x3ce), //Graphics controller index
-    _asm_.in(0x3cf), //Graphics controller DATA
-    _asm_.in(0x3c0), //AttributeControllerIndex
-    _asm_.in(0x3c1), //AttributeControllerReadPort
-    _asm_.in(0x3c0), //AttributeControllerWrite
+    _asm_.in(0x3c2); //misc
+    _asm_.in(0x3d4); //crtcIndex
+    _asm_.in(0x3d5); //crtcData
+    _asm_.in(0x3c4); //SequencerIndex
+    _asm_.in(0x3c5); //SequencerData
+    _asm_.in(0x3ce);//Graphics controller index
+    _asm_.in(0x3cf); //Graphics controller DATA
+    _asm_.in(0x3c0); //AttributeControllerIndex
+    _asm_.in(0x3c1); //AttributeControllerReadPort
+    _asm_.in(0x3c0); //AttributeControllerWrite
     _asm_.in(0x3da); //AttributeControllerReset
 }
 
 void Graphics::WriteReg(uint8* reg) {
     Assembly _asm_;
-    _asm_.out(0x3c2, *(reg)++);
+    _asm_.out(0x3C2, *(reg++));
 
     for (uint8 i=0; i<5;i++) {
-        _asm_.out(0x3c4, i);
-        _asm_.out(0x3c5,*(reg++));
+        _asm_.out(0x3C4, i);
+        _asm_.out(0x3C5,*(reg++));
     }
-    _asm_.out(0x3d4, 0x03);
-    _asm_.out(0x3d5, _asm_.in(0x3d5) | 0x80);
-    _asm_.out(0x3d4, 0x11);
-    _asm_.out(0x3d5, _asm_.in(0x3d5) & ~0x80);
+    _asm_.out(0x3D4, 0x03);
+    _asm_.out(0x3D5, _asm_.in(0x3D5) | 0x80);
+    _asm_.out(0x3D4, 0x11);
+    _asm_.out(0x3D5, _asm_.in(0x3D5) & ~0x80);
 
     reg[0x03] = reg[0x03] | 0x80;
     reg[0x11] = reg[0x11] & ~0x80;
 
     for (uint8 i=0;i<25;i++) {
-        _asm_.out(0x3d4, i);
-        _asm_.out(0x3d5, *(reg++));
+        _asm_.out(0x3D4, i);
+        _asm_.out(0x3D5, *(reg++));
     }
     for (uint8 i=0;i<9;i++) {
-        _asm_.out(0x3ce, i);
-        _asm_.out(0x3cf, *(reg++));
+        _asm_.out(0x3CE, i);
+        _asm_.out(0x3CF, *(reg++));
     }
     for (uint8 i=0;i<21;i++){
-        _asm_.in(0x3da);
-        _asm_.out(0x3c0, i); //Index
-        _asm_.out(0x3c0,*(reg++)); //Write
+        _asm_.in(0x3DA);
+        _asm_.out(0x3C0, i); //Index
+        _asm_.out(0x3C0,*(reg++)); //Write
     }
 
-    _asm_.in(0x3da);
-    _asm_.out(0x3c0, 0x20);
+    _asm_.in(0x3DA);
+    _asm_.out(0x3C0, 0x20);
 }
 
 bool Graphics::SupportsMode(uint32 width, uint32 height, uint32 colordep) {
@@ -99,8 +101,8 @@ bool Graphics::setmode(uint32 width, uint32 height, uint32 colordep) {
 
 uint8* Graphics::GetFrameBuffSeg() {
     Assembly _asm_;
-    _asm_.out(0x3ce, 0x06);
-    uint8 segnum = _asm_.in(0x3cf) & (3<<2);
+    _asm_.out(0x3CE, 0x06);
+    uint8 segnum = ((_asm_.in(0x3CF) >>2) & 0x03);
     switch(segnum) {
         default:
         case 0<<2:

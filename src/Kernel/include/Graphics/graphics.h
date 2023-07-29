@@ -23,4 +23,22 @@ class Graphics {
 
 };
 
+typedef struct tagBITMAP              /* the structure for a bitmap. */
+{
+    unsigned int width;
+    unsigned int height;
+    unsigned char *data;
+} BITMAP;
+
+typedef struct tagRECT
+{
+    long x1;
+    long y1;
+    long x2;
+    long y2;
+} RECT;
+
+
+
+
 #endif

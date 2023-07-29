@@ -14,7 +14,7 @@ class Sound {
         //Note: Note +b -> Noteb.
         //Lowest note is B8, Highest note is C0.
         //For more infomation, goto: https://pages.mtu.edu/~suits/notefreqs.html.
-        typedef enum {
+        typedef enum Note{
             C0=74573,
             Cs0=70187,
             Db0=Cs0,
@@ -168,7 +168,7 @@ class Sound {
             As8=161,
             Bb8=As8,
             B8=150
-        } note;
+        } Note;
 
         void EnableSound();
         void Stop();

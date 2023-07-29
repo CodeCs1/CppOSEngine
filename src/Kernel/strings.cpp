@@ -1,5 +1,6 @@
 #include "include/console.h"
 #include "include/string.h"
+#include "include/types.h"
 #include "include/utils.h"
 
 
@@ -32,24 +33,25 @@ void* int_to_ascii(int n, char str[]) {
 }
 
 string itos(int n) {
-    Utils utils;
-    char var[50];
-    int_to_ascii(n, var);
-    int len = stringlen(var);
-    int i =0;
-    int j = len-1;
-    while(i<(len/2+len%2))
-    {
-        char tmp=var[i];
-        var[i]=var[j];
-        var[j]=tmp;
-        i++;
-        j--;
+    int size = 0;
+    int t = n;
+
+    while(t / 10 != 0) {
+        t = t/10;
+        size++;
+    }
+    static char ret[64];
+    size++;
+    ret[size] = '\0';
+    t = n;
+    int i = size - 1;
+    while(i >= 0) {
+        ret[i] = (t % 10) + '0';
+        t = t/10;
+        i--;
     }
 
-    string ch = var;
-
-    return ch;
+    return ret;
 }
 
 int stoi(string ch) {
@@ -74,4 +76,9 @@ int stoi(string2 ch) {
         p*=0;
     }
     return n;
+}
+uint16 stringlen(string2 ch) {
+  uint16 i = 1;
+  while(ch[i++]);
+  return --i;
 }

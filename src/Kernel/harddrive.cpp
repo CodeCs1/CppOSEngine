@@ -25,19 +25,28 @@ void HardDrive::Initialize(uint16 port, bool usemaster)
 }
 */
 
+#define ERROR 0x1
+#define SECTORCOUNT 0x2
+#define LBALOW 0x3
+#define LBAMID 0x4
+#define LBAHI 0x5
+#define DEVICE 0x6
+#define COMMAND 0x7
+#define CONTROL 0x0C
+
 Assembly _asm_;
 
 HardDrive::HardDrive(uint16 port, bool usemaster)
 {
     _asm_.inw(port);
-    _asm_.in(port+0x1);
-    _asm_.in(port+0x2);
-    _asm_.in(port+0x3);
-    _asm_.in(port+0x4);
-    _asm_.in(port+0x5);
-    _asm_.in(port+0x6);
-    _asm_.in(port+0x7);
-    _asm_.in(port+0x206);
+    _asm_.in(port+ERROR);
+    _asm_.in(port+SECTORCOUNT);
+    _asm_.in(port+LBALOW);
+    _asm_.in(port+LBAMID);
+    _asm_.in(port+LBAHI);
+    _asm_.in(port+DEVICE);
+    _asm_.in(port+COMMAND);
+    _asm_.in(port+CONTROL);
 
     this->usemaster=usemaster;
     this->port = port;
@@ -50,22 +59,22 @@ void HardDrive::Identify() {
     Console console;
 
     console.Write("Used Port: ");
-    console.WriteLine(itos(port));
+    console.Write(itos(port));
 
-    _asm_.out(port+0x6, usemaster ? 0xA0 : 0xB0);
-    _asm_.out(port+0x206, 0);
-    _asm_.out(port+0x6, 0xA0);
-    uint8 status = _asm_.in(port+0x7);
+    _asm_.out(port+DEVICE, usemaster ? 0xA0 : 0xB0);
+    _asm_.out(port+CONTROL, 0);
+    _asm_.out(port+DEVICE, 0xA0);
+    uint8 status = _asm_.in(port+COMMAND);
     if (status == 0xFF)
         return;
-    _asm_.out(port+0x6, usemaster ? 0xA0 : 0xB0);
-    _asm_.out(port+0x2, 0);
-    _asm_.out(port+0x3, 0);
-    _asm_.out(port+0x4, 0);
-    _asm_.out(port+0x5, 0);
-    _asm_.out(port+0x7, 0xEC);
+    _asm_.out(port+DEVICE, usemaster ? 0xA0 : 0xB0);
+    _asm_.out(port+SECTORCOUNT, 0);
+    _asm_.out(port+LBALOW, 0);
+    _asm_.out(port+LBAMID, 0);
+    _asm_.out(port+LBAHI, 0);
+    _asm_.out(port+COMMAND, 0xEC);
 
-    status = _asm_.in(port+0x7);
+    status = _asm_.in(port+COMMAND);
     if (status == 0x00) {
         console.WriteLine("A HDD isn't found in this PC");
         return;
@@ -82,9 +91,9 @@ void HardDrive::Identify() {
     for(uint16 i=0;i<256;i++)
     {
         uint16 data=_asm_.inw(port);
-        char* test = "   \0";
-        test[0] = (data>>8)&0x00FF;
-        test[1] = data & 0x00FF;
+        char* test = "  \0";
+        test[0] = (data>>8)&0xFF;
+        test[1] = data & 0xFF;
         console.Write(test);
     }
 }
@@ -96,18 +105,18 @@ void HardDrive::Read28(uint32 sector, uint8 *data, int count) {
         return;
     //if (sector & 0xF0000000)
     //    return
-    _asm_.out(port+0x6, (usemaster ? 0xE0 : 0xF0) | ((sector & 0x0F000000) >> 24));
-    _asm_.out(port+0x1, 0);
-    _asm_.out(port+0x2, 1);
-    _asm_.out(port+0x3, sector & 0x000000FF);
-    _asm_.out(port+0x4, (sector& 0x0000FF00) >> 8);
-    _asm_.out(port+0x3, (sector& 0x00FF0000) >> 16);
-    _asm_.out(port+0x7, 0x20);
+    _asm_.out(port+ERROR, 0);
+    _asm_.out(port+DEVICE, (usemaster ? 0xE0 : 0xF0) | ((sector & 0x0F000000) >> 24));
+    _asm_.out(port+SECTORCOUNT, 1);
+    _asm_.out(port+LBALOW, sector & 0x000000FF);
+    _asm_.out(port+LBAMID, (sector& 0x0000FF00) >> 8);
+    _asm_.out(port+LBALOW, (sector& 0x00FF0000) >> 16);
+    _asm_.out(port+COMMAND, 0x21);
 
-    uint8 status = _asm_.in(port+0x7);
+    uint8 status = _asm_.in(port+COMMAND);
     while(((status & 0x80) == 0x80) && ((status & 0x01) != 0x01))
     {
-        status = _asm_.in(port+0x7);
+        status = _asm_.in(port+COMMAND);
     }
 
     if (status & 0x01) {
@@ -121,9 +130,12 @@ void HardDrive::Read28(uint32 sector, uint8 *data, int count) {
         data[i]=wdata & 0x00FF;
         if (i+1<count){
             data[i+1]=(wdata>>8) & 0x00FF;
+        } else {
+            data[1]='\0';
         }
+        console.Write(itos(*data));
     }
-    for(uint16 i=count+(count % 2);i<512;i+=2) {
+    for(uint32 i=count+(count % 2);i<512;i+=2) {
         _asm_.inw(port);
     }  
 }
@@ -142,7 +154,7 @@ void HardDrive::Write28(uint32 sector, uint8 *data, int count) {
     if (count > bytePerSector)
         return;
 
-    _asm_.out(port+0x6, (usemaster ? 0xE0 : 0xF0) | (sector & 0x0F000000) >> 24);
+    _asm_.out(port+0x6, (usemaster ? 0xE0 : 0xF0) | ((sector & 0x0F000000) >> 24) & 0x0F);
     _asm_.out(port+0x1, 0);
     _asm_.out(port+0x2, 1);
     _asm_.out(port+0x3, sector &0x000000FF);

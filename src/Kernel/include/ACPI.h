@@ -4,8 +4,8 @@
 
 class ACPI {
     public:
-        void Shutdown();
-        void Reboot();
+        static void Shutdown();
+        static void Reboot();
 };
 
 #endif

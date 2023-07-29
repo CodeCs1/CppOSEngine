@@ -15,25 +15,17 @@ void MasterBootRecord::Initialize_Partition(HardDrive* hd) {
 
     hd->Read28(0, (uint8*)&mbr, sizeof(MBR));
     console.WriteLine("MBR: ");
-    for (int i=446;i<446+4*16;i++) {
+    for (int i=446;i<446+4*16+2;i++) {
         hex.printfHex(((uint8*)&mbr)[i]);
         console.WriteChr(' ');
     }
     console.WriteChr('\n');
-    /*
-    if (mbr.magic_number != 0x55AA) {
+    if (mbr.magic_number != 0xAA55) {
         console.WriteLine("ERROR: illegal_MBR");
-        console.WriteLine(itos(mbr.magic_number));
+        console.Write(itos(mbr.magic_number));
         hex.printfHex(mbr.magic_number);
         return;
     }
-    if (mbr.magic_number == 0x0000) {
-        console.WriteLine("ERORR: MBR IS EMPTY");
-        console.WriteLine(itos(mbr.magic_number));
-        hex.printfHex16(mbr.magic_number);
-        return;
-    }
-    */
     for (int i =0;i<4;i++){
 
         FAT32_Creation fat32;
@@ -41,14 +33,14 @@ void MasterBootRecord::Initialize_Partition(HardDrive* hd) {
         if (mbr.primaryPartition[i].partitionid == 0x00)
             continue;
 
-        console.Write("Partition:");
+        console.Write("Partition: ");
         hex.printfHex(i&0xFF);
 
         if (mbr.primaryPartition[i].bootable == 0x80) {
-            console.Write("Bootable: ");
+            console.WriteLine("Bootable: ");
             console.WriteChr('\n');
         } else {
-            console.Write("Not Bootable: ");
+            console.WriteLine("Not Bootable: ");
             console.WriteChr('\n');
         }
         console.WriteChr('\n');
