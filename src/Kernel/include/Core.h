@@ -7,5 +7,8 @@
 #include "utils.h"
 #include "string.h"
 #include "types.h"
+#include "GDT.h"
+#include "IDT.h"
+
 
 #endif

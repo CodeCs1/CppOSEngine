@@ -21,7 +21,16 @@ gccEXTRAcommandline+= \
 	-fno-builtin \
 	-fno-rtti \
 	-fno-exceptions \
-	-fno-leading-underscore
+	-fno-leading-underscore \
+	-mno-red-zone \
+	-Wwrite-strings \
+	-Wno-unused-variable \
+	-pedantic \
+	-finline-functions \
+	-nostdinc \
+	-ffreestanding  \
+	-Wno-unused-parameter \
+	-fno-permissive
 
 filesystem_include += ${INCLUDE_FOLDER}/FileSystem/FAT/*.h 
 
@@ -110,6 +119,9 @@ install:
 	install ${ASCII_include} /usr/include/Kernel/ASCII
 	install ${driver_include} /usr/include/Kernel/driver
 	install ${Debug_Port_include} /usr/include/Kernel/Debug_Port
+
+	cp ${src}/Kernel/include/Core.h /usr/include/Kernel
+
 	@if [ -f ${DESTDIR}/linker.ld ]; then echo "removing linker.ld"; rm -rf ${DESTDIR}/linker.ld ; fi
 	@echo adding linker.ld...
 	@echo "ENTRY(start)" >> ${DESTDIR}/linker.ld

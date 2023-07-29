@@ -14,11 +14,14 @@ INFO: Debugger hasn't support yet.
 
 *CODE*
 ```cpp
+/*
 #include <Kernel/console.h>
 #include <Kernel/strings.h>
 #include <Kernel/utils.h>
 #include <Kernel/kernel.h>
-//New version include Kernel/Core.h
+*/
+//For convenient, include this instead.
+#include <Kernrl/Core.h>
 
 class Main : public kernel {
   public:
@@ -27,23 +30,29 @@ class Main : public kernel {
     }
     void Start() override { //important
       //add code here
-      //add AfterStart(); here if AfterStart is defined
     }
     /*
       to halt the kernel with custom code, use:
+      */
     void AfterStart() override { //also optional
       //add code here
     }
-    */
 };
 
 extern "C" void main_kernel() { //this can be changed in boot.asm from source code
+
+  //Bacase the startup script isn't used, so install GDT, IDT in this line bellow.
+  GDT::Init();
+  Interrupt::idt_install();
+  InterruptRequiests::Init();
+  InterruptServiceRoutines::Init();  
   Main main;
   kernel* kernel = &main;
   kernel->BeforeStart();
   while(1) {
     kernel->Start();
   }
+  kernel->AfterStart();
 }
 
 ```
@@ -56,6 +65,6 @@ ld -m elf_i386 -static -pie --no-dynamic-linker -T <object_path>/linker.ld -o ke
 * usually object_path can be found in /opt/CppOSEngine.
 * if you install the program to another path, change object_path to your path.
 
-***SOME FILE (OR CODE) BASED ON OTHER GITHUB REPOSITORY AND OFFICIAL OSDEV WEBSITE (wiki.osdev.org)***
+***SOME FILE (OR CODE) BASED ON OTHER GITHUB REPOSITORY , OFFICIAL OSDEV WEBSITE (wiki.osdev.org) AND OSDEVER.NET***
 
 ***THIS PROJECT USE MIT LICENSE***
