@@ -69,7 +69,7 @@ build:
 	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/sound/soundblaster.cpp -o ${src}/Kernel/object/soundblaster16.o ${gccEXTRAcommandline}
 	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Graphics/graphics.cpp -o ${src}/Kernel/object/graphics.o ${gccEXTRAcommandline}
 	@echo Building Assembly...
-	nasm -f elf32 ${asm} -o ${src}/Kernel/object/boot.o
+	nasm -f elf32  ${asm} -o ${src}/Kernel/object/boot.o
 
 install:
 	mkdir -p ${DESTDIR}
