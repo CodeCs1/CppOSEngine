@@ -21,7 +21,7 @@ INFO: Debugger hasn't support yet.
 #include <Kernel/kernel.h>
 */
 //For convenient, include this instead.
-#include <Kernrl/Core.h>
+#include <Kernel/Core.h>
 
 class Main : public kernel {
   public:
