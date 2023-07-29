@@ -28,6 +28,11 @@ filesystem_include += ${INCLUDE_FOLDER}/FileSystem/FAT/*.h
 graphics_include += ${INCLUDE_FOLDER}/Graphics/*.h 
 
 sound_include += ${INCLUDE_FOLDER}/Sound/*.h
+ASCII_include += ${INCLUDE_FOLDER}/ASCII/*.h
+
+Debug_Port_include += ${INCLUDE_FOLDER}/Debug_Port/*.h
+
+driver_include += ${INCLUDE_FOLDER}/driver/*.h
 
 include += \
 	${INCLUDE_FOLDER}/*.h \
@@ -46,7 +51,15 @@ object += \
 	${src}/Kernel/object/graphics.o \
 	${src}/Kernel/object/harddrive.o \
 	${src}/Kernel/object/sound.o \
-	${src}/Kernel/object/soundblaster16.o
+	${src}/Kernel/object/soundblaster16.o \
+	${src}/Kernel/object/port.o \
+	${src}/Kernel/object/GDT.o \
+	${src}/Kernel/object/CMOS.o \
+	${src}/Kernel/object/CPUID.o \
+	${src}/Kernel/object/IDT.o \
+	${src}/Kernel/object/keybroad.o \
+	${src}/Kernel/object/timer.o \
+	${src}/Kernel/object/pic.o
 
 asm += \
 	${src}/boot.asm
@@ -68,6 +81,15 @@ build:
 	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/sound/sound.cpp -o ${src}/Kernel/object/sound.o ${gccEXTRAcommandline}
 	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/sound/soundblaster.cpp -o ${src}/Kernel/object/soundblaster16.o ${gccEXTRAcommandline}
 	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Graphics/graphics.cpp -o ${src}/Kernel/object/graphics.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/driver/CMOS.cpp -o ${src}/Kernel/object/CMOS.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/driver/CPUID.cpp -o ${src}/Kernel/object/CPUID.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/GDT.cpp -o ${src}/Kernel/object/GDT.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/IDT.cpp -o ${src}/Kernel/object/IDT.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/SPort.cpp -o ${src}/Kernel/object/port.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Keybroad.cpp -o ${src}/Kernel/object/keybroad.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/timer.cpp -o ${src}/Kernel/object/timer.o ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/PIC.cpp -o ${src}/Kernel/object/pic.o ${gccEXTRAcommandline}
+
 	@echo Building Assembly...
 	nasm -f elf32  ${asm} -o ${src}/Kernel/object/boot.o
 
@@ -79,9 +101,15 @@ install:
 	mkdir -p /usr/include/Kernel/FileSystem/FAT
 	mkdir -p /usr/include/Kernel/Graphics
 	mkdir -p /usr/include/Kernel/Sound
+	mkdir -p /usr/include/Kernel/ASCII
+	mkdir -p /usr/include/Kernel/Debug_Port
+	mkdir -p /usr/include/Kernel/driver
 	install ${filesystem_include} /usr/include/Kernel/FileSystem/FAT
 	install ${graphics_include} /usr/include/Kernel/Graphics
 	install ${sound_include} /usr/include/Kernel/Sound
+	install ${ASCII_include} /usr/include/Kernel/ASCII
+	install ${driver_include} /usr/include/Kernel/driver
+	install ${Debug_Port_include} /usr/include/Kernel/Debug_Port
 	@if [ -f ${DESTDIR}/linker.ld ]; then echo "removing linker.ld"; rm -rf ${DESTDIR}/linker.ld ; fi
 	@echo adding linker.ld...
 	@echo "ENTRY(start)" >> ${DESTDIR}/linker.ld

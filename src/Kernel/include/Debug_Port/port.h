@@ -6,7 +6,6 @@
 #include "../SPort.h"
 inline void EnableDebug() {
     Console console;
-    ConsoleColorClass ccc;
     Port debug_port(PORTTYPE::COM1);
     int X;
     int Y;
@@ -15,7 +14,7 @@ inline void EnableDebug() {
     X = w/4;
     Y=  h/5;
     console.updateCursor2(X, Y);
-    ccc.ForegroundColor(ConsoleColor::Green);
+    console.ForegroundColor(ConsoleColor::Green);
     console.WriteLine("Waiting for g++ debugger connection...");
     debug_port.Init_Port();
     debug_port.read_serial();
@@ -30,7 +29,7 @@ inline void EnableDebug() {
         __asm__("int3");
         return;
     } else {
-        ccc.ForegroundColor(ConsoleColor::Red);
+        console.ForegroundColor(ConsoleColor::Red);
         console.WriteLine("Conenction failed.\nPlease reconnect COM1 and try again.");
         __asm__("hlt");
     }
