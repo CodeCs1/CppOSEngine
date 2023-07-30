@@ -1,7 +1,7 @@
 #ifndef __KEYBROAD_H__
 #define __KEYBROAD_H__
 
-#include "Core.h"
+#include "../Core.h"
 
 class Keybroad {
     private:
