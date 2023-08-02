@@ -1,5 +1,7 @@
 # C++OSEngine [Full name: C++ Operating System Engine]
-***All grammars (including sentences) in this Readme file are completely wrong or incorrect!***
+**All grammars (including sentence) in this Readme file are completely wrong or incorrect.**
+**You have been warned.**
+
 A toolkit (not really) that using C++ to create an OS.
 ![Alt cpposengine](misc/cpposengine.png)
 
