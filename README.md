@@ -1,4 +1,4 @@
-# C++OSEngine [Full name: C++ Operating System Engine]
+# C++ Operating System Engine
 **All grammars (including sentence) in this Readme file are completely wrong or incorrect.**
 **You have been warned.**
 
