@@ -3,13 +3,9 @@
 DESTDIR:=/opt/CppOSEngine
 
 HEADER_PATH:=/usr/include
-
-src:=./src
-
+src:=$(shell pwd)/src
 INCLUDE_FOLDER=${src}/Kernel/include
-
-CXX_COMPILER=g++
-
+CXX_COMPILER=x86_64-pc-linux-gnu-g++
 gccMAINcommandline+= \
 	-m32 \
 	-c
@@ -32,75 +28,31 @@ gccEXTRAcommandline+= \
 	-Wno-unused-parameter \
 	-fno-permissive
 
-filesystem_include += ${INCLUDE_FOLDER}/FileSystem/FAT/*.h 
+filesystem_include := ${INCLUDE_FOLDER}/FileSystem/FAT/*.h 
+graphics_include := ${INCLUDE_FOLDER}/Graphics/*.h 
+sound_include := ${INCLUDE_FOLDER}/Sound/*.h
+ASCII_include := ${INCLUDE_FOLDER}/ASCII/*.h
+Debug_Port_include := ${INCLUDE_FOLDER}/Debug_Port/*.h
+driver_include := ${INCLUDE_FOLDER}/driver/*.h
 
-graphics_include += ${INCLUDE_FOLDER}/Graphics/*.h 
+include := ${INCLUDE_FOLDER}/*.h
 
-sound_include += ${INCLUDE_FOLDER}/Sound/*.h
-ASCII_include += ${INCLUDE_FOLDER}/ASCII/*.h
+Cobject := $(patsubst ${src}/Kernel/%.cpp, ${src}/Kernel/object/%.o, $(shell find ${src}/Kernel -name *.cpp))
+asmobj := ${src}/Kernel/object/boot.o
 
-Debug_Port_include += ${INCLUDE_FOLDER}/Debug_Port/*.h
+$(Cobject): ${src}/Kernel/object/%.o : ${src}/Kernel/%.cpp
+	@if [[ ! -d $(shell dirname $@) ]]; then mkdir -p $(shell dirname $@); fi
+	${CXX_COMPILER} ${gccMAINcommandline} $< -o $@ ${gccEXTRAcommandline}
 
-driver_include += ${INCLUDE_FOLDER}/driver/*.h
+$(asmobj): ${src}/Kernel/object/%.o: ${src}/%.asm
+	nasm -f elf32 $< -o $@
 
-include += \
-	${INCLUDE_FOLDER}/*.h \
-
-object += \
-	${src}/Kernel/object/boot.o \
-	${src}/Kernel/object/console.o \
-	${src}/Kernel/object/FatFS.o \
-	${src}/Kernel/object/FatFS2.o \
-	${src}/Kernel/object/kernel.o \
-	${src}/Kernel/object/strings.o \
-	${src}/Kernel/object/utils.o \
-	${src}/Kernel/object/ACPI.o \
-	${src}/Kernel/object/Mouse.o \
-	${src}/Kernel/object/MBR.o \
-	${src}/Kernel/object/graphics.o \
-	${src}/Kernel/object/harddrive.o \
-	${src}/Kernel/object/sound.o \
-	${src}/Kernel/object/soundblaster16.o \
-	${src}/Kernel/object/port.o \
-	${src}/Kernel/object/GDT.o \
-	${src}/Kernel/object/CMOS.o \
-	${src}/Kernel/object/CPUID.o \
-	${src}/Kernel/object/IDT.o \
-	${src}/Kernel/object/keybroad.o \
-	${src}/Kernel/object/timer.o \
-	${src}/Kernel/object/pic.o
-
-asm += \
-	${src}/boot.asm
 
 all: build install
 
-build:
-	mkdir -p ${src}/Kernel/object
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/console.cpp -o ${src}/Kernel/object/console.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/kernel.cpp -o ${src}/Kernel/object/kernel.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/strings.cpp -o ${src}/Kernel/object/strings.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/utils.cpp -o ${src}/Kernel/object/utils.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/ACPI.cpp -o ${src}/Kernel/object/ACPI.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Graphics/Mouse.cpp -o ${src}/Kernel/object/Mouse.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/FileSystem/FAT/bootsector.cpp -o ${src}/Kernel/object/MBR.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/FileSystem/FAT/filesystem.cpp -o ${src}/Kernel/object/FatFS.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/FileSystem/FAT/filesystem2.cpp -o ${src}/Kernel/object/FatFS2.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/harddrive.cpp -o ${src}/Kernel/object/harddrive.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/sound/sound.cpp -o ${src}/Kernel/object/sound.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/sound/soundblaster.cpp -o ${src}/Kernel/object/soundblaster16.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Graphics/graphics.cpp -o ${src}/Kernel/object/graphics.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/driver/CMOS.cpp -o ${src}/Kernel/object/CMOS.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/driver/CPUID.cpp -o ${src}/Kernel/object/CPUID.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/GDT.cpp -o ${src}/Kernel/object/GDT.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/IDT.cpp -o ${src}/Kernel/object/IDT.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/SPort.cpp -o ${src}/Kernel/object/port.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/Keybroad.cpp -o ${src}/Kernel/object/keybroad.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/timer.cpp -o ${src}/Kernel/object/timer.o ${gccEXTRAcommandline}
-	${CXX_COMPILER} ${gccMAINcommandline} ${src}/Kernel/PIC.cpp -o ${src}/Kernel/object/pic.o ${gccEXTRAcommandline}
+build: $(asmobj) $(Cobject)
+	ar rv libCppOSEngine.a $(asmobj) $(Cobject)
 
-	@echo Building Assembly...
-	nasm -f elf32  ${asm} -o ${src}/Kernel/object/boot.o
 
 install:
 	mkdir -p ${DESTDIR}
@@ -150,6 +102,9 @@ install:
 	@echo "	}" >> ${DESTDIR}/linker.ld 
 	@echo "	/DISCARD/ : { *(.fini_array*) *(.comment) }" >> ${DESTDIR}/linker.ld
 	@echo "	}" >> ${DESTDIR}/linker.ld
+
+test:
+	@make -f tests/Makefile
 
 uninstall:
 	@echo Removing all...

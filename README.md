@@ -1,72 +1,16 @@
 # C++ Operating System Engine
-**All grammars (including sentence) in this Readme file are completely wrong or incorrect.**
-**You have been warned.**
+
+### The project is back in development baby!
 
 A toolkit (not really) that using C++ to create an OS.
-![Alt cpposengine](misc/cpposengine.png)
 
-INFO: Some of the function in this Engine might not worked like:
-  ATA Harddrive, MBR, Sound driver, FAT, FileSystem, GUI (still in development).
+> [INFO]
+> This ToolKit hasn't support debugging yet.
 
-INFO: Debugger hasn't support yet.
+## How to build
+* 1: Clone this repository.
+* 2: Build the project by typing ```make```.
+* 3: Install the project by running ```make install``` with sudo-privileges.
 
-*HOW TO BUILD* >*For Linux Only*<:
-* 1: Extract zip file after you downloaded it (use Terminal , File Manager or Extractor programs). <if you use git, you can skip this step>
-* 2: Open the terminal, go to the project directory and type 'make' to build the project.
-* 3: To install the project, run 'make install' or 'sudo make install'.
 
-*CODE*
-```cpp
-/*
-#include <Kernel/console.h>
-#include <Kernel/strings.h>
-#include <Kernel/utils.h>
-#include <Kernel/kernel.h>
-*/
-//For convenient, include this instead.
-#include <Kernel/Core.h>
-
-class Main : public kernel {
-  public:
-    void BeforeStart() override { //optional
-      //add code here
-    }
-    void Start() override { //important
-      //add code here
-    }
-    /*
-      to halt the kernel with custom code, use:
-      */
-    void AfterStart() override { //also optional
-      //add code here
-    }
-};
-
-extern "C" void main_kernel() { //this can be changed in boot.asm from source code
-
-  //Bacase the startup script isn't available, so put this code bellow
-  GDT::Init();
-  Interrupt::idt_install();
-  InterruptRequiests::Init();
-  InterruptServiceRoutines::Init();  
-  Main main;
-  kernel* kernel = &main;
-  kernel->BeforeStart();
-  while(1) {
-    kernel->Start();
-  }
-  kernel->AfterStart();
-}
-
-```
-
-There is no builder yet, so use this command to build instead:
-```
-g++ -m32 -c <mainfile>.cpp -o <kernelfilename>.o -fno-stack-protector -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore
-ld -m elf_i386 -static -pie --no-dynamic-linker -T <object_path>/linker.ld -o kernel.bin <object_path>
-```
-* usually object_path is in /opt/CppOSEngine.
-* if you install the program to another path, change object_path to your path.
-
-***SOME FILE (OR CODE) BASED ON OTHER GITHUB REPOSITORY , OFFICIAL OSDEV WEBSITE (wiki.osdev.org) AND osdever.net***
-***THIS PROJECT USE MIT LICENSE***
+#### The example codes are in 'tests' folder
