@@ -4,7 +4,7 @@
 
 A toolkit (not really) that using C++ to create an OS.
 
-> [!INFO]
+> [!NOTE]
 > This ToolKit hasn't support debugging yet.
 
 ## How to build
