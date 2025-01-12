@@ -28,15 +28,6 @@ gccEXTRAcommandline+= \
 	-Wno-unused-parameter \
 	-fno-permissive
 
-filesystem_include := ${INCLUDE_FOLDER}/FileSystem/FAT/*.h 
-graphics_include := ${INCLUDE_FOLDER}/Graphics/*.h 
-sound_include := ${INCLUDE_FOLDER}/Sound/*.h
-ASCII_include := ${INCLUDE_FOLDER}/ASCII/*.h
-Debug_Port_include := ${INCLUDE_FOLDER}/Debug_Port/*.h
-driver_include := ${INCLUDE_FOLDER}/driver/*.h
-
-include := ${INCLUDE_FOLDER}/*.h
-
 Cobject := $(patsubst ${src}/Kernel/%.cpp, ${src}/Kernel/object/%.o, $(shell find ${src}/Kernel -name *.cpp))
 asmobj := ${src}/Kernel/object/boot.o
 
@@ -45,6 +36,7 @@ $(Cobject): ${src}/Kernel/object/%.o : ${src}/Kernel/%.cpp
 	${CXX_COMPILER} ${gccMAINcommandline} $< -o $@ ${gccEXTRAcommandline}
 
 $(asmobj): ${src}/Kernel/object/%.o: ${src}/%.asm
+	@if [[ ! -d $(shell dirname $@) ]]; then mkdir -p $(shell dirname $@); fi
 	nasm -f elf32 $< -o $@
 
 
@@ -57,22 +49,8 @@ build: $(asmobj) $(Cobject)
 install:
 	mkdir -p ${DESTDIR}
 	mkdir -p /usr/include/Kernel
-	install ${object} ${DESTDIR}
-	install ${include} /usr/include/Kernel
-	mkdir -p /usr/include/Kernel/FileSystem/FAT
-	mkdir -p /usr/include/Kernel/Graphics
-	mkdir -p /usr/include/Kernel/Sound
-	mkdir -p /usr/include/Kernel/ASCII
-	mkdir -p /usr/include/Kernel/Debug_Port
-	mkdir -p /usr/include/Kernel/driver
-	install ${filesystem_include} /usr/include/Kernel/FileSystem/FAT
-	install ${graphics_include} /usr/include/Kernel/Graphics
-	install ${sound_include} /usr/include/Kernel/Sound
-	install ${ASCII_include} /usr/include/Kernel/ASCII
-	install ${driver_include} /usr/include/Kernel/driver
-	install ${Debug_Port_include} /usr/include/Kernel/Debug_Port
 
-	cp ${src}/Kernel/include/Core.h /usr/include/Kernel
+	find src/Kernel/include -type f -exec install -Dm 755 "{}" "/usr/include/Kernel" \;
 
 	@if [ -f ${DESTDIR}/linker.ld ]; then echo "removing linker.ld"; rm -rf ${DESTDIR}/linker.ld ; fi
 	@echo adding linker.ld...
@@ -114,3 +92,4 @@ uninstall:
 clean:
 	@echo Cleaning...
 	@rm -rvf ${src}/Kernel/object
+	@rm -rvf ./libCppOSEngine.a

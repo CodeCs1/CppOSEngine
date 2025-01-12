@@ -14,8 +14,6 @@ class Utils {
         static void* MemorySet(void* s, int c, size n);
         static void * memcpy(void * dest, const void * src, size count);
 
-        static const char*malloc2(size size);
-
 };
 
 #endif

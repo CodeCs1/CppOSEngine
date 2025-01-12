@@ -1,13 +1,11 @@
-//For convenient, include this instead.
-#include <Kernel/Core.h>
+#include <Core.h>
 
 class Main : public kernel {
   public:
     void BeforeStart() override { }
     void Start() override {
-        Console::Clear();
-        Console::WriteLine("Hello World");
-	asm("int3");
+      Console::Clear();
+      Console::WriteLine("Hello World");
     }
     void AfterStart() override { }
 };
@@ -20,8 +18,6 @@ extern "C" void main_kernel() {
   Main main;
   kernel* kernel = &main;
   kernel->BeforeStart();
-  while(1) {
-    kernel->Start();
-  }
+  kernel->Start();
   kernel->AfterStart();
 }
