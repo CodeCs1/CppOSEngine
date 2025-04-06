@@ -5,7 +5,7 @@ DESTDIR:=/opt/CppOSEngine
 HEADER_PATH:=/usr/include
 src:=$(shell pwd)/src
 INCLUDE_FOLDER=${src}/Kernel/include
-CXX_COMPILER=x86_64-pc-linux-gnu-g++
+CXX_COMPILER=g++
 gccMAINcommandline+= \
 	-m32 \
 	-c
@@ -32,11 +32,11 @@ Cobject := $(patsubst ${src}/Kernel/%.cpp, ${src}/Kernel/object/%.o, $(shell fin
 asmobj := ${src}/Kernel/object/boot.o
 
 $(Cobject): ${src}/Kernel/object/%.o : ${src}/Kernel/%.cpp
-	@if [[ ! -d $(shell dirname $@) ]]; then mkdir -p $(shell dirname $@); fi
+	@if [ ! -d $(shell dirname $@) ]; then mkdir -p $(shell dirname $@); fi
 	${CXX_COMPILER} ${gccMAINcommandline} $< -o $@ ${gccEXTRAcommandline}
 
 $(asmobj): ${src}/Kernel/object/%.o: ${src}/%.asm
-	@if [[ ! -d $(shell dirname $@) ]]; then mkdir -p $(shell dirname $@); fi
+	@if [ ! -d $(shell dirname $@) ]; then mkdir -p $(shell dirname $@); fi
 	nasm -f elf32 $< -o $@
 
 

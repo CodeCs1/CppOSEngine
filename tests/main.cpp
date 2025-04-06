@@ -6,6 +6,10 @@ class Main : public kernel {
     void Start() override {
       Console::Clear();
       Console::WriteLine("Hello World");
+      Console::WriteLine("This is a test of the kernel.");
+      string2 str = Console::ReadLine();
+      Console::WriteLine("You entered: ");
+      Console::WriteLine(str);
     }
     void AfterStart() override { }
 };
