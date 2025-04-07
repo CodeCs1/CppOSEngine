@@ -4,9 +4,10 @@ OUTPUT_ARCH(i386:i386)
 SECTIONS
 {
 	. = 0x0100000;
+	kern_start = .;
 	.text :
 	{
-		*(.multiboot)
+		KEEP(*(.multiboot))
 		*(.text*)
 		*(.rodata)
 	}
@@ -20,7 +21,9 @@ SECTIONS
 	}
 	.bss  : 
 	{
+		*(COMMON)
 		*(.bss)
 	}
 	/DISCARD/ : { *(.fini_array*) *(.comment) }
+	kern_sz = . - kern_start;
 	}

@@ -27,11 +27,26 @@ bits 32
 		jmp irq_common_stub
 %endmacro
 
+MBALIGN equ 1 << 0
+MBINFO  equ 1 << 1
+MBFLAGS equ MBALIGN | MBINFO
+MAGIC  equ 0x1BADB002
+CHECKSUM equ -(MAGIC + MBFLAGS)
+
+section .multiboot
+align 4
+    dd    MAGIC
+    dd    MBFLAGS
+    dd    CHECKSUM
+
+section .bss
+align 16
+stack_bottom:
+    resb 16384
+stack_top:
+
+
 section .text
-    align 4
-    dd    0x1badb002
-    dd    0x00
-    dd    -(0x1badb002+0x00)
 
 global start
 extern main_kernel
@@ -175,14 +190,15 @@ check_cpuid:
     ret
 
 start:
+    mov esp, stack_top
+    push 0
+    popfd
+    push ebx
+    push eax
+
     call main_kernel
 
 _stop:
     cli
     hlt
     jmp _stop
-
-
-times 510-($$-$) db 0
-db 0x55
-db 0xAA

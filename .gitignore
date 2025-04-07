@@ -2,3 +2,5 @@ src/Kernel/object
 tests/*.o
 tests/*.bin
 *.a
+*.iso
+tests/tests

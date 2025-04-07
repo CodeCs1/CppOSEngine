@@ -82,3 +82,18 @@ uint16 stringlen(string2 ch) {
   while(ch[i++]);
   return --i;
 }
+
+void* memset(void* dest, uint8 value, uint32 size) {
+    int i;
+    for(i=0;i<size;i++) {
+        ((char*)dest)[i]=value;
+    }
+    return dest;
+}
+void memcpy(void* dest, void* src, uint32 size) {
+  uint8* d = (uint8*)dest;
+  uint8* s = (uint8*)src;
+  for (uint32 i = 0; i < size; i++) {
+    d[i] = s[i];
+  }
+}

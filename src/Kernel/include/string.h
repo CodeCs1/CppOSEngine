@@ -15,5 +15,7 @@ int stoi(string ch);
 
 int stoi(string2 ch);
 
+void* memset(void* dest, uint8 value, uint32 size);
+void memcpy(void* dest, void* src, uint32 size);
 
 #endif

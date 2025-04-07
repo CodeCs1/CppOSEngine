@@ -79,9 +79,9 @@ class ConsoleKey {
 
 class Hex {
     public:
-        void printfHex(uint8 key);
-        void printfHex16(uint16 key);
-        void printfHex32(uint32 key);
+        static void printfHex(uint8 key);
+        static void printfHex16(uint16 key);
+        static void printfHex32(uint32 key);
 };
 
 

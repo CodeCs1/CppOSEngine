@@ -10,5 +10,8 @@
 #include "GDT.h"
 #include "IDT.h"
 
+//New
+#include "multiboot.h"
+
 
 #endif

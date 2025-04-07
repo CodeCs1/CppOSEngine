@@ -33,7 +33,7 @@ asmobj := ${src}/Kernel/object/boot.o
 
 $(Cobject): ${src}/Kernel/object/%.o : ${src}/Kernel/%.cpp
 	@if [ ! -d $(shell dirname $@) ]; then mkdir -p $(shell dirname $@); fi
-	${CXX_COMPILER} ${gccMAINcommandline} $< -o $@ ${gccEXTRAcommandline}
+	${CXX_COMPILER} ${gccMAINcommandline} $< -o $@ -I${INCLUDE_FOLDER} ${gccEXTRAcommandline}
 
 $(asmobj): ${src}/Kernel/object/%.o: ${src}/%.asm
 	@if [ ! -d $(shell dirname $@) ]; then mkdir -p $(shell dirname $@); fi
@@ -62,7 +62,7 @@ install:
 	@echo "	. = 0x0100000;" >> ${DESTDIR}/linker.ld
 	@echo "	.text :" >> ${DESTDIR}/linker.ld
 	@echo "	{" >> ${DESTDIR}/linker.ld
-	@echo "		*(.multiboot)" >> ${DESTDIR}/linker.ld
+	@echo "		KEEP(*(.multiboot))" >> ${DESTDIR}/linker.ld
 	@echo "		*(.text*)" >> ${DESTDIR}/linker.ld
 	@echo "		*(.rodata)" >> ${DESTDIR}/linker.ld
 	@echo "	}" >> ${DESTDIR}/linker.ld
@@ -76,6 +76,7 @@ install:
 	@echo "	}" >> ${DESTDIR}/linker.ld
 	@echo "	.bss  : ">> ${DESTDIR}/linker.ld
 	@echo "	{" >> ${DESTDIR}/linker.ld
+	@echo "		*(COMMON)" >> ${DESTDIR}/linker.ld
 	@echo "		*(.bss)" >> ${DESTDIR}/linker.ld
 	@echo "	}" >> ${DESTDIR}/linker.ld 
 	@echo "	/DISCARD/ : { *(.fini_array*) *(.comment) }" >> ${DESTDIR}/linker.ld
