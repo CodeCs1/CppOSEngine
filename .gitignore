@@ -4,3 +4,6 @@ tests/*.bin
 *.a
 *.iso
 tests/tests
+/build/
+.clang*
+.*project*

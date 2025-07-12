@@ -6,8 +6,6 @@
 
 #define SPECIALKEY 0xE0
 
-uint16 stringlen(string2 ch);
-
 enum ConsoleColor {
     Black=0,
     Blue=1,
@@ -32,6 +30,8 @@ class Console {
         int ScreenX=80;
         int ScreenY=25;
     public:
+        //Initialize console
+        static void Init();
         //clear the screen
         static void Clear();
         //write a character
@@ -43,25 +43,13 @@ class Console {
         //wrte a text
         static void Write(string2 ch);
 
-        static void updateCursor2(int X, int Y);
-
-        static void WriteLine2(string2 ch);
-
         //get the columns of the display
         int GetScreenX() {
             return ScreenX;
         }
-        //set the columns of the display (default is 80)
-        void SetScreenX(int number) {
-            ScreenX = number;
-        }
         //get the rows of the display
         int GetScreenY() {
             return ScreenY;
-        }
-        //set the rows of the display (default is 25)
-        void SetScreenY(int number) {
-            ScreenY = number;
         }
         static void BackgroundColor(ConsoleColor text_color,ConsoleColor bg_color);
         static void BackgroundColor(int text_color,ConsoleColor bg_color);
@@ -83,7 +71,6 @@ class Hex {
         static void printfHex16(uint16 key);
         static void printfHex32(uint32 key);
 };
-
 
 
 #endif

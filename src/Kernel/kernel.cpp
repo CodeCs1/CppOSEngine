@@ -1,27 +1,15 @@
 #include "include/kernel.h"
-#include "include/ACPI.h"
-#include "include/GDT.h"
-#include "include/Sound/soundblaster.h"
 #include "include/console.h"
 #include "include/types.h"
+#include "include/multiboot.h"
+#include "include/IDT.h"
+#include "pmm.h"
+#include <driver/Keyboard.h>
 
 #define MASTERCOMMAND 0x20
 #define MASTERDATA 0x21
 #define SLAVECOMMAND 0xA0
 #define SLAVEDATA 0xA1
-
-void kernel::BeforeStart() {
-    Console console;
-    console.WriteLine("Hello World!");
-    Start();
-}
-
-void kernel::Start() {
-
-}
-void kernel::AfterStart() {
-    __asm__ __volatile__("hlt");
-}
 
 //in{b8bit,w16bit}
 
@@ -53,14 +41,16 @@ void Assembly::io_wait() {
     out(0x80, 0);
 }
 
-bool Assembly::is_interrupt_enable() {
-    unsigned long flags;
-    asm volatile ( "pushf\n\t"
-                   "pop %0"
-                   : "=g"(flags) );
-    return flags & (1 << 9);
+
+extern "C" void main_kernel(uint32_t start, uint32_t end,uint64_t magic, Multiboot_info* info) {
+  Interrupt::idt_install();
+  InterruptRequiests::Init();
+  InterruptServiceRoutines::Init();
+  Keyboard::Init();
+  Console::Init();
+
+  PMM::Init(end-start, 0x100000);
+
+  run_kernel();
 }
 
-void Assembly::cpuid(int code, uint32 *eax, uint32 *ebx, uint32* ecx, uint32 *edx) {
-    __asm__ volatile("cpuid": "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx) : "0" (code));
-}

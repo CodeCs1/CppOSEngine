@@ -22,9 +22,7 @@ typedef int32 int32_t;
 typedef uint32 uint32_t;
 typedef int64 int64_t;
 typedef uint64 uint64_t;
-//typedef size size_t;
+typedef size size_t;
 
-#define low_16(address) (uint16)((address) & 0xFFFF)
-#define high_16(address) (uint16)(((address) >> 16) & 0xFFFF)
 
 #endif

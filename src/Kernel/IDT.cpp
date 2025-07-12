@@ -1,10 +1,10 @@
 #include "include/IDT.h"
 #include "include/ACPI.h"
-#include "include/driver/Keybroad.h"
 #include "include/console.h"
+#include "include/driver/Keyboard.h"
 #include "include/kernel.h"
+#include "include/mem.h"
 #include "include/types.h"
-#include "include/utils.h"
 
 struct idt_entry idt[256];
 struct idt_ptr idtp;
@@ -114,16 +114,13 @@ void idt_set_gate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) {
 void Interrupt::idt_install() {
   idtp.limit = (sizeof(struct idt_entry) * 256) - 1;
   idtp.base = (uintptr)&idt;
-  Utils::memcpy(&idt, 0, sizeof(struct idt_entry) * 256);
+  //memset(idt, 0, sizeof(struct idt_entry) * 256);
+  memset(idt, 0, sizeof(struct idt_entry)*256);
   idt_load();
 }
 
 extern "C" void fault_handler(struct regs *r) {
-  /* Is this a fault whose number is from 0 to 31? */
   if (r->int_no < 32) {
-    /* Display the description for the Exception that occurred.
-     *  In this tutorial, we will simply halt the system using an
-     *  infinite loop */
     Console::ForegroundColor(ConsoleColor::White);
     Console::Write("Exception occurred while running Kernel!\nPlease check "
                    "your code and then try again!\n");

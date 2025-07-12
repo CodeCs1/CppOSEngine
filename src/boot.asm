@@ -33,7 +33,6 @@ MBFLAGS equ MBALIGN | MBINFO
 MAGIC  equ 0x1BADB002
 CHECKSUM equ -(MAGIC + MBFLAGS)
 
-section .multiboot
 align 4
     dd    MAGIC
     dd    MBFLAGS
@@ -48,24 +47,8 @@ stack_top:
 
 section .text
 
-global start
+global _start
 extern main_kernel
-
-global gdt_flush
-extern gp
-gdt_flush:
-	; Load the GDT
-	lgdt [gp]
-	; Flush the values to 0x10
-	jmp 0x08:flush2
-flush2:
-	mov ax, 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	ret
 
 ISR_NOERR 0
 ISR_NOERR 1
@@ -189,12 +172,28 @@ check_cpuid:
     and eax, 0x00200000
     ret
 
-start:
+
+_start:
+		lgdt[gdt]
+		mov ax, 0x10
+		mov ds, ax
+		mov es, ax
+		mov fs, ax
+		mov gs, ax
+		mov ss, ax
+		jmp 0x08:pmain
+
+
+extern start_kernel
+extern end_kernel
+
+pmain:
     mov esp, stack_top
-    push 0
-    popfd
+
     push ebx
     push eax
+    push end_kernel
+    push start_kernel
 
     call main_kernel
 
@@ -202,3 +201,28 @@ _stop:
     cli
     hlt
     jmp _stop
+
+section .data
+; basic flat model
+gdt_base:
+		dq 0
+.gdt_text:
+		dw 0xffff
+		dw 0
+		db 0
+		db 0b10011010
+		db 0b11001111
+		db 0
+
+.gdt_data:
+		dw 0xffff
+		dw 0
+		db 0
+		db 0b10010010
+		db 0b11001111
+		db 0
+gdt_end:
+
+gdt:
+		dw gdt_end - gdt_base - 1
+		dd gdt_base

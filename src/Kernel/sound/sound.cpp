@@ -1,8 +1,8 @@
 #include "../include/Sound/sound.h"
 #include "../include/types.h"
 #include "../include/kernel.h"
-#include "../include/utils.h"
 #include "../include/console.h"
+#include "../include/mem.h"
 
 #define PC_SPEAKER 0x61
 
@@ -30,32 +30,4 @@ void Sound::Stop() {
 
     uint8 tmp = _asm_.in(PC_SPEAKER);
     _asm_.out(PC_SPEAKER, tmp & 0xFC);
-}
-
-void Sound::BeepTest() {
-    Assembly _asm_;
-    Utils utils;
-    EnableSound();
-
-    play_sound(C1);
-    utils.Sleep(333);
-    play_sound(C2);
-    utils.Sleep(333);
-    play_sound(C3);
-    utils.Sleep(333);
-    play_sound(C4);
-    utils.Sleep(333);
-    play_sound(C5);
-    utils.Sleep(333);
-    play_sound(C6);
-    utils.Sleep(333);
-    play_sound(C7);
-    utils.Sleep(333);
-    play_sound(C8);
-    utils.Sleep(333);
-
-    Stop();
-
-    Console console;
-    console.WriteLine("<Testing completed>");
 }

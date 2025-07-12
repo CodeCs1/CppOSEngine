@@ -1,5 +1,7 @@
 .PHONY: build install
 
+all: build
+
 DESTDIR:=/opt/CppOSEngine
 
 HEADER_PATH:=/usr/include

@@ -1,5 +1,5 @@
 #include <pmm.h>
-#include <string.h>
+#include <mem.h>
 
 uint32_t mem_size = 0;
 uint32_t mem_used = 0;

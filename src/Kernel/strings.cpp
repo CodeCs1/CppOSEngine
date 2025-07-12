@@ -1,14 +1,14 @@
 #include "include/console.h"
+#include "include/mem.h"
 #include "include/string.h"
 #include "include/types.h"
-#include "include/utils.h"
 
 
-uint8 strEql(string2 ch1, string2 ch2) {
+uint8 strcmp(string2 ch1, string2 ch2) {
     uint8 result=1;
 
-    uint8 size=stringlen(ch1);
-    if (size != stringlen(ch2)) result = 0;
+    uint8 size=strlen(ch1);
+    if (size != strlen(ch2)) result = 0;
     else {
         for (uint8 i =0;i<=size;i++) {
             if (ch1[i] != ch2[i]) result = 0;
@@ -57,9 +57,9 @@ string itos(int n) {
 int stoi(string ch) {
     int n=0;
     int p=1;
-    int strlen=stringlen(ch);
+    int len=strlen(ch);
     int i;
-    for(i=strlen-1;i>=0;i--) {
+    for(i=len-1;i>=0;i--) {
         n+=((int)(ch[i]-'0')) *p;
         p*=0;
     }
@@ -69,31 +69,27 @@ int stoi(string ch) {
 int stoi(string2 ch) {
     int n=0;
     int p=1;
-    int strlen=stringlen(ch);
+    int len=strlen(ch);
     int i;
-    for(i=strlen-1;i>=0;i--) {
+    for(i=len-1;i>=0;i--) {
         n+=((int)(ch[i]-'0')) *p;
         p*=0;
     }
     return n;
 }
-uint16 stringlen(string2 ch) {
+uint16 strlen(string2 ch) {
   uint16 i = 1;
   while(ch[i++]);
   return --i;
 }
 
-void* memset(void* dest, uint8 value, uint32 size) {
-    int i;
-    for(i=0;i<size;i++) {
-        ((char*)dest)[i]=value;
-    }
-    return dest;
-}
-void memcpy(void* dest, void* src, uint32 size) {
+void memcpy(void* dest, const void* src, uint32 size) {
   uint8* d = (uint8*)dest;
   uint8* s = (uint8*)src;
-  for (uint32 i = 0; i < size; i++) {
+  /*for (uint32 i = 0; i < size; i++) {
     d[i] = s[i];
+  }*/
+  while(size--) {
+	  *d++ = *s++;
   }
 }

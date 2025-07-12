@@ -1,9 +1,9 @@
 #include "../include/string.h"
 #include "../include/Sound/soundblaster.h"
 #include "../include/kernel.h"
-#include "../include/utils.h"
-#include "../include/utils.h"
+#include "../include/mem.h"
 #include "../include/console.h"
+#include "../include/mem.h"
 int channel_number1;
 
 //inthz 1 -> 255
@@ -25,9 +25,7 @@ SoundBlasterDriver::~SoundBlasterDriver() { //disable sound driver
 
 void SoundBlasterDriver::Reset() {
     Assembly _asm_;
-    Utils utils;
     _asm_.out(RESET, 1);
-    utils.Sleep(3);
     _asm_.out(RESET, 0);
     _asm_.out(READ, 0xAA);
     if (_asm_.in(READ) != 0xAA) {

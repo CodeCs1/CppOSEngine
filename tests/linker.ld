@@ -1,13 +1,13 @@
-ENTRY(start)
+ENTRY(_start)
 OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:i386)
 SECTIONS
 {
-	. = 0x0100000;
-	kern_start = .;
+	. = 2M;
+	start_kernel = .;
 	.text :
 	{
-		KEEP(*(.multiboot))
+		*(.multiboot)
 		*(.text*)
 		*(.rodata)
 	}
@@ -25,5 +25,5 @@ SECTIONS
 		*(.bss)
 	}
 	/DISCARD/ : { *(.fini_array*) *(.comment) }
-	kern_sz = . - kern_start;
+	end_kernel = .;
 	}
